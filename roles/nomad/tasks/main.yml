@@ -32,9 +32,16 @@
 
 - name: Stop Nomad
   block:
+    - name: Check if Nomad package is installed
+      apt:
+        list_pkgs: true
+      register: nomad_pkg
+
     - name: Stop Nomad
       ansible.builtin.systemd:
         name: "{{ nomad_service_name }}"
         state: stopped
         enabled: no
+      when: "nomad" in nomad_pkg.packages
+
   when: nomad_enabled is false
